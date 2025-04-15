@@ -49,67 +49,73 @@ public class ASM {
         }
     }
     
-    // Bellman-Ford Algorithm
-    public static void bellmanFord(int[][] graph, int src) {
+    // Floyd-Warshall Algorithm
+    public static void floydWarshall(int[][] graph) {
         int n = graph.length;
-        int[] dist = new int[n];
+        int[][] dist = new int[n][n];
         
-        // Initialize distances
-        Arrays.fill(dist, INF);
-        dist[src] = 0;
+        // Initialize distance matrix
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                dist[i][j] = graph[i][j];
+            }
+        }
         
-        // Relax all edges |V|-1 times
-        for (int i = 0; i < n - 1; i++) {
-            for (int u = 0; u < n; u++) {
-                for (int v = 0; v < n; v++) {
-                    if (graph[u][v] != INF && dist[u] != INF) {
-                        int newDist = dist[u] + graph[u][v];
-                        if (newDist < dist[v]) {
-                            dist[v] = newDist;
-                        }
+        // Find shortest paths
+        for (int k = 0; k < n; k++) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (dist[i][k] != INF && dist[k][j] != INF && dist[i][k] + dist[k][j] < dist[i][j]) {
+                        dist[i][j] = dist[i][k] + dist[k][j];
                     }
                 }
             }
         }
         
-        // Check for negative-weight cycles
-        for (int u = 0; u < n; u++) {
-            for (int v = 0; v < n; v++) {
-                if (graph[u][v] != INF && dist[u] != INF && dist[u] + graph[u][v] < dist[v]) {
-                    System.out.println("Error: Graph contains negative-weight cycle");
-                    return;
-                }
-            }
-        }
-        
-        // Print results in a format similar to document's Table 14
-        System.out.println("Bellman-Ford Algorithm Results:");
-        System.out.println("Vertex\tDistance from Source");
+        // Print results in a matrix format similar to document
+        System.out.println("Floyd-Warshall Algorithm Results:");
+        System.out.println("Shortest distances between all pairs of vertices:");
+        System.out.print(" \t");
         for (int i = 0; i < n; i++) {
-            char vertex = (char) ('A' + i); // Convert 0,1,2,3 to A,B,C,D
-            String distance = (dist[i] == INF) ? "∞" : String.valueOf(dist[i]);
-            System.out.println(vertex + "\t" + distance);
+            System.out.print((char) ('A' + i) + "\t");
+        }
+        System.out.println();
+        for (int i = 0; i < n; i++) {
+            System.out.print((char) ('A' + i) + "\t");
+            for (int j = 0; j < n; j++) {
+                String distance = (dist[i][j] == INF) ? "∞" : String.valueOf(dist[i][j]);
+                System.out.print(distance + "\t");
+            }
+            System.out.println();
         }
     }
     
     public static void main(String[] args) {
-        // Graph from document (A=0, B=1, C=2, D=3)
-        int[][] graph = {
+        // Graph for Dijkstra (A=0, B=1, C=2, D=3)
+        int[][] graphDijkstra = {
             {0, 1, 4, INF},    // A -> B=1, A -> C=4
             {INF, 0, 3, 2},    // B -> C=3, B -> D=2
             {INF, INF, 0, INF}, // C has no outgoing edges
             {INF, INF, INF, 0}  // D has no outgoing edges
         };
         
+        // Graph for Floyd-Warshall (Table 11: A=0, B=1, C=2, D=3)
+        int[][] graphFloyd = {
+            {0, 3, INF, 7},     // A -> B=3, A -> D=7
+            {8, 0, 2, INF},    // B -> A=8, B -> C=2
+            {5, INF, 0, 1},    // C -> A=5, C -> D=1
+            {2, INF, INF, 0}   // D -> A=2
+        };
+        
         // Run Dijkstra's algorithm
         System.out.println("=== Running Dijkstra's Algorithm ===");
-        dijkstra(graph, 0); // Source is A (vertex 0)
+        dijkstra(graphDijkstra, 0); // Source is A (vertex 0)
         
         // Separator for clarity
         System.out.println();
         
-        // Run Bellman-Ford algorithm
-        System.out.println("=== Running Bellman-Ford Algorithm ===");
-        bellmanFord(graph, 0); // Source is A (vertex 0)
+        // Run Floyd-Warshall algorithm
+        System.out.println("=== Running Floyd-Warshall Algorithm ===");
+        floydWarshall(graphFloyd);
     }
 }
