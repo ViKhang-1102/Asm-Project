@@ -1,0 +1,94 @@
+package asm;
+
+public class Asm {
+    private int[] elements;
+    private int top;
+    private int maxSize;
+
+    // Constructor
+    public Asm(int size) {
+        if (size <= 0) {
+            throw new IllegalArgumentException("Stack size must be positive");
+        }
+        maxSize = size;
+        elements = new int[maxSize];
+        top = -1;
+    }
+
+    // Method to add an element to the stack
+    public void push(int item) {
+        if (isFull()) {
+            System.out.println("Stack is full. Cannot push " + item);
+            return;
+        }
+        elements[++top] = item;
+        System.out.println("Pushed: " + item);
+    }
+
+    // Method to remove and return the top element
+    public int pop() {
+        if (isEmpty()) {
+            System.out.println("Stack is empty. Cannot pop element");
+            return -1;
+        }
+        int poppedItem = elements[top];
+        top--;
+        return poppedItem;
+    }
+
+    // Method to view the top element without removing it
+    public int peek() {
+        if (isEmpty()) {
+            System.out.println("Stack is empty");
+            return -1;
+        }
+        return elements[top];
+    }
+
+    // Check if the stack is empty
+    public boolean isEmpty() {
+        return top == -1;
+    }
+
+    // Check if the stack is full
+    public boolean isFull() {
+        return top == maxSize - 1;
+    }
+
+    // Get the current size of the stack
+    public int size() {
+        return top + 1;
+    }
+
+    // Print all elements in the stack
+    public void printStack() {
+        if (isEmpty()) {
+            System.out.println("Stack is empty");
+            return;
+        }
+        System.out.println("Stack elements:");
+        for (int i = top; i >= 0; i--) {
+            System.out.println(elements[i]);
+        }
+    }
+
+    // Main method for testing
+    public static void main(String[] args) {
+        Asm stack = new Asm(5);
+
+        // Testing various methods
+        stack.push(10);
+        stack.push(20);
+        stack.push(30);
+
+        System.out.println("Top element: " + stack.peek());
+        System.out.println("Stack size: " + stack.size());
+
+        stack.printStack();
+
+        System.out.println("Popped element: " + stack.pop());
+        System.out.println("Popped element: " + stack.pop());
+
+        stack.printStack();
+    }
+}
