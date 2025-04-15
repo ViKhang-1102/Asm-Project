@@ -1,0 +1,118 @@
+package asm;
+
+class ListNode {
+    int data;
+    ListNode next;
+
+    // Constructor
+    ListNode(int data) {
+        this.data = data;
+        this.next = null;
+    }
+}
+
+public class Asm {
+    private ListNode head;
+    private int size;
+
+    // Constructor
+    public Asm() {
+        head = null;
+        size = 0;
+    }
+
+    // Add element to the end of the list
+    public void add(int data) {
+        ListNode newNode = new ListNode(data);
+        if (head == null) {
+            head = newNode;
+        } else {
+            ListNode temp = head;
+            while (temp.next != null) {
+                temp = temp.next;
+            }
+            temp.next = newNode;
+        }
+        size++;
+    }
+
+    // Remove first occurrence of a value
+    public boolean remove(int data) {
+        if (head == null) return false;
+
+        if (head.data == data) {
+            head = head.next;
+            size--;
+            return true;
+        }
+
+        ListNode temp = head;
+        ListNode prev = null;
+        while (temp != null) {
+            if (temp.data == data) {
+                if (prev != null) {
+                    prev.next = temp.next;
+                }
+                size--;
+                return true;
+            }
+            prev = temp;
+            temp = temp.next;
+        }
+        return false;
+    }
+
+    // Search for an element
+    public boolean search(int key) {
+        ListNode temp = head;
+        while (temp != null) {
+            if (temp.data == key) return true;
+            temp = temp.next;
+        }
+        return false;
+    }
+
+    // Get current size of the list
+    public int size() {
+        return size;
+    }
+
+    // Print the list
+    public void printList() {
+        if (head == null) {
+            System.out.println("List is empty");
+            return;
+        }
+
+        ListNode temp = head;
+        System.out.print("List: ");
+        while (temp != null) {
+            System.out.print(temp.data + " ");
+            temp = temp.next;
+        }
+        System.out.println();
+    }
+
+    // Main method for testing
+    public static void main(String[] args) {
+        Asm list = new Asm();
+
+        // Add elements
+        list.add(10);
+        list.add(20);
+        list.add(30);
+
+        // Print initial list
+        System.out.println("Initial List:");
+        list.printList();
+        System.out.println("Size: " + list.size());
+
+        // Search operation
+        System.out.println("Contains 20: " + list.search(20));
+
+        // Remove operation
+        list.remove(20);
+        System.out.println("After removing 20:");
+        list.printList();
+    }
+}
