@@ -1,0 +1,121 @@
+package asm;
+
+public class Asm {
+    private int[] queue;
+    private int front, rear, size, capacity;
+
+    // Constructor
+    public Asm(int capacity) {
+        if (capacity <= 0) {
+            throw new IllegalArgumentException("Capacity must be positive");
+        }
+        this.capacity = capacity;
+        queue = new int[capacity];
+        front = 0;
+        rear = -1;
+        size = 0;
+    }
+
+    // Enqueue method with more robust handling
+    public void enqueue(int item) {
+        if (isFull()) {
+            // Resize the queue if it's full
+            resize();
+        }
+        rear = (rear + 1) % capacity;
+        queue[rear] = item;
+        size++;
+        System.out.println("Enqueued: " + item);
+    }
+
+    // Dequeue method with improved error handling
+    public int dequeue() {
+        if (isEmpty()) {
+            throw new IllegalStateException("Queue is empty");
+        }
+        int item = queue[front];
+        front = (front + 1) % capacity;
+        size--;
+        return item;
+    }
+
+    // Peek at the front element without removing
+    public int peek() {
+        if (isEmpty()) {
+            throw new IllegalStateException("Queue is empty");
+        }
+        return queue[front];
+    }
+
+    // Check if queue is empty
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    // Check if queue is full
+    public boolean isFull() {
+        return size == capacity;
+    }
+
+    // Get current size of the queue
+    public int size() {
+        return size;
+    }
+
+    // Resize the queue when it's full
+    private void resize() {
+        int newCapacity = capacity * 2;
+        int[] newQueue = new int[newCapacity];
+
+        // Copy elements maintaining the circular queue order
+        for (int i = 0; i < size; i++) {
+            newQueue[i] = queue[(front + i) % capacity];
+        }
+
+        queue = newQueue;
+        front = 0;
+        rear = size - 1;
+        capacity = newCapacity;
+    }
+
+    // Print queue contents
+    public void printQueue() {
+        if (isEmpty()) {
+            System.out.println("Queue is empty");
+            return;
+        }
+
+        System.out.println("Queue elements:");
+        for (int i = 0; i < size; i++) {
+            System.out.println(queue[(front + i) % capacity]);
+        }
+    }
+
+    // Main method for testing
+    public static void main(String[] args) {
+        Asm queue = new Asm(3); // Initial capacity of 3
+
+        try {
+            // Enqueue elements
+            queue.enqueue(10);
+            queue.enqueue(20);
+            queue.enqueue(30);
+            queue.enqueue(40); // This will trigger resize
+
+            // Print queue
+            System.out.println("Queue size: " + queue.size());
+            queue.printQueue();
+
+            // Dequeue elements
+            System.out.println("Dequeued: " + queue.dequeue());
+            System.out.println("Peek: " + queue.peek());
+
+            // Additional operations
+            queue.enqueue(50);
+            queue.printQueue();
+
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+}
